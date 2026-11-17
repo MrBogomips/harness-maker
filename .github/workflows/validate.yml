@@ -15,7 +15,6 @@ jobs:
       - name: Validate manifest syntax
         run: |
           jq . .claude-plugin/plugin.json > /dev/null
-          jq . .claude-plugin/marketplace.json > /dev/null
 
       - name: Run structural validation
         run: bash tests/run-structural-tests.sh

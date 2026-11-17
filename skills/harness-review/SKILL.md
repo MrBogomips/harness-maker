@@ -166,10 +166,10 @@ speculation. Keep "works well" honest: it tells `harness-setup` what not to touc
 ## Optional: feedback on the tool
 
 The review's targets are *this project's* harness — `harness-setup` acts on them. But a review
-sometimes surfaces a limitation of the **tool itself** (agentic-harness): a check that could not
+sometimes surfaces a limitation of the **tool itself** (harness-maker): a check that could not
 be expressed, a step that misled, a capability the plugin lacks. That is upstream feedback, not a
 project change. After the review context is delivered, offer `harness-feedback` to file it as a
-GitHub issue on the agentic-harness repo, with the user's consent. This stays within the
+GitHub issue on the harness-maker repo, with the user's consent. This stays within the
 read-only contract — this skill still writes nothing; the handoff, like the one to `harness-setup`,
 is what carries any action.
 

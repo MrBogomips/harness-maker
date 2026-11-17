@@ -1,10 +1,10 @@
 # CLAUDE.md
 
-Guidance for working in the agentic-harness plugin repository.
+Guidance for working in the harness-maker plugin repository.
 
 ## Repository structure
 
-This is a single-plugin repository: the repo root is the plugin. `.claude-plugin/` holds both `plugin.json` (the plugin manifest) and `marketplace.json` (a single-plugin marketplace named `mrbogomips-harness`, whose one entry points at `./`).
+This is a single-plugin repository: the repo root is the plugin. `.claude-plugin/` holds only `plugin.json` (the plugin manifest). The plugin is distributed through the `mrbogomips` marketplace in `MrBogomips/claude-plugins` (entry source `{"source": "github", "repo": "MrBogomips/harness-maker"}`); this repo has no marketplace of its own, and `tests/validate-plugin.sh` fails if a `marketplace.json` reappears. Until 0.11.0 the plugin was named `agentic-harness` and shipped a `mrbogomips-harness` marketplace here.
 
 - **Skills** — `skills/*/SKILL.md` (harness-setup, harness-review, harness-feedback, spec-advisor, tracker-advisor, visual-advisor, harness-doctor)
 - **Commands** — `commands/*.md` (`/feedback` — the one deliberate command; named to avoid clashing with the `harness-feedback` skill; everything else is a skill)
@@ -19,13 +19,13 @@ The flow uses two repo labels: `feedback` (marks issues to validate) and `needs-
 
 ### Adding a skill
 
-A new skill must be listed in: `plugin.json` description (skill count + one-liner), `marketplace.json` entry description, README "The skills" + "How they fit together", the CLAUDE.md skills list above, the "What this skill is not" tables of the sibling advisors, and the `harness-setup` frontmatter boundaries. No test enforces these.
+A new skill must be listed in: `plugin.json` description (skill count + one-liner), the `harness-maker` entry description in `MrBogomips/claude-plugins` (a PR there), README "The skills" + "How they fit together", the CLAUDE.md skills list above, the "What this skill is not" tables of the sibling advisors, and the `harness-setup` frontmatter boundaries. No test enforces these.
 
 `validate-references.sh` treats any `references/<file>` in a SKILL.md as a path relative to that skill. Describe target-project paths (e.g. a harness's `tools.md`) in prose, not as `references/...`.
 
 ## Versioning
 
-`plugin.json` is the source of truth for the plugin version. The `marketplace.json` entry must carry the same version — `tests/validate-versions.sh` enforces the sync. Bump both together.
+`plugin.json` is the only place the version lives: the `mrbogomips` marketplace entry carries no version and reads it from here, so a release needs no change in `MrBogomips/claude-plugins`. The plugin name must stay `harness-maker` — it is the name users install (`harness-maker@mrbogomips`) and the skill namespace; `tests/validate-plugin.sh` checks it.
 
 ## Validation
 
@@ -37,11 +37,13 @@ bash tests/run-structural-tests.sh
 
 This is a strict requirement. No change is complete until validation passes. Requires `jq`.
 
-Before a release or community-marketplace submission, also run:
+Before a release or community-marketplace submission, also run (CI runs it too):
 
 ```bash
 claude plugin validate . --strict
 ```
+
+This file lives at `.claude/CLAUDE.md`, not the repo root: the repo root is the plugin, and the validator warns (an error under `--strict`) about a root `CLAUDE.md` because a plugin does not load it.
 
 ## Shell script conventions
 

@@ -124,7 +124,7 @@ jobs:
                 "",
                 list,
                 "",
-                "The section format is documented in [`shared/feedback-format.md`](https://github.com/MrBogomips/agentic-harness/blob/main/shared/feedback-format.md). A section counts as filled once it has real text — an HTML-comment hint or `_No response_` doesn't count. I'll re-check automatically when you edit the issue.",
+                "The section format is documented in [`shared/feedback-format.md`](https://github.com/MrBogomips/harness-maker/blob/main/shared/feedback-format.md). A section counts as filled once it has real text — an HTML-comment hint or `_No response_` doesn't count. I'll re-check automatically when you edit the issue.",
               ].join("\n");
               await addLabel("needs-info");
             } else {
