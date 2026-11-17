@@ -1,6 +1,6 @@
 ---
 name: harness-feedback
-description: "Run a kaizen retrospective on an agentic-harness run and, with the user's consent, file tool-improvement feedback as a GitHub issue on the upstream agentic-harness repo. Use after a harness-setup or harness-review run, or on its own in a postmortem / kaizen quality loop, whenever the user wants to give feedback, suggest an improvement, report friction or a bug, or 'open an issue to improve the tool'. It gathers what was done and the choices made during the run into the standard feedback format, redacts project-identifying details, and creates the issue only after explicit approval. Boundary: this files feedback about the agentic-harness TOOL upstream — it is not harness-review (which assesses THIS project's own harness and writes a review context), and not tracker-advisor or issue triage in the user's own project."
+description: "Run a kaizen retrospective on an harness-maker run and, with the user's consent, file tool-improvement feedback as a GitHub issue on the upstream harness-maker repo. Use after a harness-setup or harness-review run, or on its own in a postmortem / kaizen quality loop, whenever the user wants to give feedback, suggest an improvement, report friction or a bug, or 'open an issue to improve the tool'. It gathers what was done and the choices made during the run into the standard feedback format, redacts project-identifying details, and creates the issue only after explicit approval. Boundary: this files feedback about the harness-maker TOOL upstream — it is not harness-review (which assesses THIS project's own harness and writes a review context), and not tracker-advisor or issue triage in the user's own project."
 model: inherit
 ---
 
@@ -8,7 +8,7 @@ model: inherit
 
 A harness run teaches you something about the *tool* that built it — where it was clear, where
 it dragged, what was missing. This skill captures that as structured, privacy-safe feedback and
-files it as a GitHub issue on the **upstream `agentic-harness` repository**, so the tool improves
+files it as a GitHub issue on the **upstream `harness-maker` repository**, so the tool improves
 run over run. It is the outward-facing half of the feedback loop: `harness-setup` Step 7 routes
 in-project feedback into the project's own files; this skill routes *tool* feedback upstream.
 
@@ -20,7 +20,7 @@ everything below operationalizes it.
 
 `harness-review` assesses **this project's** harness and emits a review context for `harness-setup`
 to act on locally. `harness-feedback` looks the other way: it sends feedback about the
-**agentic-harness tool itself** to its public repo. "Review my harness" / "is the harness used
+**harness-maker tool itself** to its public repo. "Review my harness" / "is the harness used
 well" is `harness-review`. "Give feedback on the tool" / "this step of the plugin was confusing" /
 "open an issue to improve it" / a kaizen retrospective on the run is this skill. Neither authors or
 triages issues in the user's own tracker — that is the project's tracker, not this.
@@ -103,12 +103,12 @@ with the label, and fall back to creating without it if that is rejected.
 
 ```bash
 gh issue create \
-  --repo MrBogomips/agentic-harness \
+  --repo MrBogomips/harness-maker \
   --title "[feedback] {summary}" \
   --label feedback \
   --body-file "{tmpfile}" \
   || gh issue create \
-       --repo MrBogomips/agentic-harness \
+       --repo MrBogomips/harness-maker \
        --title "[feedback] {summary}" \
        --body-file "{tmpfile}"
 ```
@@ -121,10 +121,10 @@ pass `template=`, which would override the body.)
 
 ```bash
 # URL-encode title and body, then assemble:
-# https://github.com/MrBogomips/agentic-harness/issues/new?labels=feedback&title=<enc>&body=<enc>
+# https://github.com/MrBogomips/harness-maker/issues/new?labels=feedback&title=<enc>&body=<enc>
 title_enc=$(printf '%s' "[feedback] {summary}" | jq -sRr @uri)
 body_enc=$(jq -sRr @uri < "{tmpfile}")
-echo "https://github.com/MrBogomips/agentic-harness/issues/new?labels=feedback&title=${title_enc}&body=${body_enc}"
+echo "https://github.com/MrBogomips/harness-maker/issues/new?labels=feedback&title=${title_enc}&body=${body_enc}"
 ```
 
 Report the created issue's URL (or the prefilled link) back to the user.

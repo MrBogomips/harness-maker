@@ -272,7 +272,7 @@ Two skills are generated from templates rather than designed per project:
 - **`{domain}-setup-check`** â€” whenever `tools.md` has at least one row. Fill
   `references/setup-check-template.md`. It is **self-contained**: it reads `tools.md` and runs
   inline presence checks, and hands off to the plugin's `harness-doctor` for the full check when
-  the agentic-harness plugin is installed. A teammate without the plugin still gets a working
+  the harness-maker plugin is installed. A teammate without the plugin still gets a working
   check and an optional install hint.
 
 ## Step 5: Build the orchestrator and register the pointer
@@ -369,7 +369,7 @@ Some feedback is not about *this* harness but about the **tool that built it** â
 step, a missing capability, a bug in the plugin itself. That belongs upstream, not in the
 project's files. When the feedback is of that kind, offer to run `harness-feedback`: it runs a
 short kaizen retrospective and, with the user's explicit consent, files a privacy-safe GitHub
-issue on the agentic-harness repo. Offering is the default; a "no" is fine, and nothing is filed
+issue on the harness-maker repo. Offering is the default; a "no" is fine, and nothing is filed
 without approval.
 
 ## Deliverable checklist

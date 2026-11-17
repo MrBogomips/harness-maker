@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
-# Layer 1: Structural validation for the agentic-harness plugin (root layout)
+# Layer 1: Structural validation for the harness-maker plugin (root layout)
 # Validates plugin.json, SKILL.md frontmatter, AGENT.md frontmatter,
-# hooks.json, commands, and the single-plugin marketplace.json
+# hooks.json, commands, and the distribution guards (name, no per-repo marketplace)
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+EXPECTED_NAME="harness-maker"
 ERRORS=0
 WARNINGS=0
 
@@ -26,7 +27,7 @@ fi
 
 validate_plugin() {
     local plugin_dir="$1"
-    local plugin_name="agentic-harness"
+    local plugin_name="$EXPECTED_NAME"
 
     echo ""
     echo "=== Validating plugin: $plugin_name ==="
@@ -160,74 +161,32 @@ validate_plugin() {
     fi
 }
 
-# --- Marketplace validation (single-plugin manifest) ---
+# --- Distribution validation (published through the mrbogomips marketplace) ---
 
-validate_marketplace() {
-    local manifest="$REPO_ROOT/.claude-plugin/marketplace.json"
+validate_distribution() {
+    local pjson="$REPO_ROOT/.claude-plugin/plugin.json"
 
     echo ""
-    echo "=== Validating marketplace.json ==="
+    echo "=== Validating distribution ==="
 
-    if [[ ! -f "$manifest" ]]; then
-        error "Missing .claude-plugin/marketplace.json"
-        return
+    # The plugin is listed in MrBogomips/claude-plugins (marketplace "mrbogomips").
+    # A per-repo marketplace would list it twice for users who have both.
+    if [[ -f "$REPO_ROOT/.claude-plugin/marketplace.json" ]]; then
+        error "found .claude-plugin/marketplace.json — this plugin is published through the MrBogomips/claude-plugins marketplace; do not add a per-repo one"
+    else
+        ok "no per-repo marketplace.json"
     fi
 
-    if ! jq empty "$manifest" 2>/dev/null; then
-        error "marketplace.json is not valid JSON"
-        return
+    local name version
+    name="$(jq -r '.name // empty' "$pjson")"
+    version="$(jq -r '.version // empty' "$pjson")"
+    if [[ "$name" != "$EXPECTED_NAME" ]]; then
+        error "plugin.json name is '$name', expected '$EXPECTED_NAME' (the name listed in the mrbogomips marketplace)"
     fi
-
-    # Check required top-level fields
-    for field in name plugins; do
-        if [[ "$(jq -r ".$field // empty" "$manifest")" == "" ]]; then
-            error "marketplace.json missing required field '$field'"
-        fi
-    done
-
-    # Check version (may be top-level or in metadata)
-    local version
-    version="$(jq -r '.version // .metadata.version // empty' "$manifest")"
-    if [[ -z "$version" ]]; then
-        error "marketplace.json missing 'version' (top-level or metadata.version)"
+    if ! printf '%s' "$version" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+        error "plugin.json version '$version' is not MAJOR.MINOR.PATCH"
     fi
-
-    # Exactly one plugin entry in this single-plugin marketplace
-    local plugin_count
-    plugin_count="$(jq '.plugins | length' "$manifest")"
-    if [[ "$plugin_count" -ne 1 ]]; then
-        error "marketplace.json: expected exactly 1 plugin entry, found $plugin_count"
-        return
-    fi
-
-    local name source description
-    name="$(jq -r '.plugins[0].name // empty' "$manifest")"
-    source="$(jq -r '.plugins[0].source // empty' "$manifest")"
-    description="$(jq -r '.plugins[0].description // empty' "$manifest")"
-
-    if [[ -z "$name" ]]; then
-        error "marketplace.json: plugin entry missing 'name'"
-    fi
-    if [[ -z "$source" ]]; then
-        error "marketplace.json: plugin '$name' missing 'source'"
-    fi
-    if [[ -z "$description" ]]; then
-        error "marketplace.json: plugin '$name' missing 'description'"
-    fi
-
-    # Check source path resolves to a directory containing plugin.json
-    if [[ -n "$source" && ! -d "$REPO_ROOT/$source" ]]; then
-        error "marketplace.json: plugin '$name' source path '$source' does not exist"
-    elif [[ -n "$source" && ! -f "$REPO_ROOT/$source/.claude-plugin/plugin.json" ]]; then
-        error "marketplace.json: plugin '$name' source '$source' missing .claude-plugin/plugin.json"
-    fi
-
-    # Check string-only entries (bare paths are not valid)
-    if jq -e '.plugins[0] | type == "string"' "$manifest" >/dev/null 2>&1; then
-        error "marketplace.json: plugin entry is a bare string — must be an object"
-    fi
-
-    ok "marketplace.json: structure valid ($plugin_count plugin)"
+    ok "plugin.json: $name@$version"
 }
 
 # --- Name-clash validation (a command and a skill must not share a name) ---
@@ -258,12 +217,12 @@ validate_name_clashes() {
 
 # --- Main ---
 
-echo "agentic-harness Plugin Validator"
+echo "harness-maker Plugin Validator"
 echo "============================"
 
 validate_plugin "$REPO_ROOT"
 validate_name_clashes "$REPO_ROOT"
-validate_marketplace
+validate_distribution
 
 # Summary
 echo ""

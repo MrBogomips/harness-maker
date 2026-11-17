@@ -1,7 +1,7 @@
 # Feedback format — the standard for tool-improvement issues
 
 This file is the **single source of truth** for the feedback a harness run can send back
-upstream to improve the `agentic-harness` tool itself. Three things mirror it and must stay in
+upstream to improve the `harness-maker` tool itself. Three things mirror it and must stay in
 sync with it:
 
 - the GitHub issue template — `.github/ISSUE_TEMPLATE/feedback.md`,
@@ -16,7 +16,7 @@ and let the others follow.
 Feedback is always filed on the **upstream plugin repository**, never the end user's own repo —
 the harness runs inside someone else's project, but the improvement is to *this tool*.
 
-- **Repository:** `MrBogomips/agentic-harness`
+- **Repository:** `MrBogomips/harness-maker`
 - **Label (auto-applied by the template; the CI check filters on it):** `feedback`
 - **Title prefix:** `[feedback] `
 

@@ -1,13 +1,13 @@
 ---
 name: Tool feedback
-about: Feedback or a suggestion to improve the agentic-harness tool, ideally from a kaizen retrospective after a harness run.
+about: Feedback or a suggestion to improve the harness-maker tool, ideally from a kaizen retrospective after a harness run.
 title: "[feedback] "
 labels: feedback
 assignees: ''
 ---
 
 <!--
-Thanks for helping improve agentic-harness.
+Thanks for helping improve harness-maker.
 
 This template is the standard feedback format. All eight sections below (everything down to and
 including "Environment") are MANDATORY — a bot will ask for anything left empty.

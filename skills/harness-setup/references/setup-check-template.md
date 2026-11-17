@@ -6,9 +6,9 @@ fresh laptop, a CI runner — find out whether their machine has what the harnes
 
 ## Design
 
-- **Two tiers.** When the agentic-harness plugin is installed at 0.10.0 or later, the skill hands
-  off to its `harness-doctor` skill, which has the full deterministic detector — so every harness
-  benefits when the plugin improves. When the plugin is absent or older, the skill runs its own
+- **Two tiers.** When the harness-maker plugin is installed (or its predecessor
+  `agentic-harness` at 0.10.0 or later), the skill hands off to its `harness-doctor` skill,
+  which has the full deterministic detector — so every harness benefits when the plugin improves. When the plugin is absent or older, the skill runs its own
   inline checks. It is never a dead pointer.
 - **Reads the registry at runtime.** The list of tools lives in `tools.md`, not in this skill, so
   a registry change needs no edit here.
@@ -34,9 +34,9 @@ current machine. It changes nothing.
 
 ## Step 1 — Prefer the full check
 
-If the `agentic-harness:harness-doctor` skill is available in this session **and** the installed
-agentic-harness plugin is version 0.10.0 or later, invoke it with the registry path above and
-stop here — it reports every status, including stale and disabled installs, and proposes pinned
+If the `harness-maker:harness-doctor` skill is available in this session — or, on an older
+install, `agentic-harness:harness-doctor` with the agentic-harness plugin at version 0.10.0 or
+later — invoke it with the registry path above and stop here — it reports every status, including stale and disabled installs, and proposes pinned
 install rows. If it is not available, or older, continue with the inline check.
 
 ## Step 2 — Inline check
@@ -73,9 +73,9 @@ not run it: installing is a harness change. Offer to apply the missing installs 
 setup, which asks for approval one command at a time and shows each tool's provenance first.
 Credentials stay with the user — name the variable or login step, never ask for the secret.
 
-For the most thorough check, the agentic-harness plugin provides `harness-doctor`:
+For the most thorough check, the harness-maker plugin provides `harness-doctor`:
 `claude plugin marketplace add {PLUGIN_MARKETPLACE_REPO}` then
-`claude plugin install agentic-harness@{PLUGIN_MARKETPLACE_NAME}`. This is optional — the check
+`claude plugin install {PLUGIN_NAME}@{PLUGIN_MARKETPLACE_NAME}`. This is optional — the check
 above is complete on its own.
 ````
 
@@ -84,5 +84,6 @@ above is complete on its own.
 | Placeholder | Value |
 |---|---|
 | `{DOMAIN}`, `{DOMAIN_LABEL}` | the harness domain slug and its readable name |
-| `{PLUGIN_MARKETPLACE_REPO}` | `MrBogomips/agentic-harness` |
-| `{PLUGIN_MARKETPLACE_NAME}` | `mrbogomips-harness` |
+| `{PLUGIN_NAME}` | `harness-maker` |
+| `{PLUGIN_MARKETPLACE_REPO}` | `MrBogomips/claude-plugins` |
+| `{PLUGIN_MARKETPLACE_NAME}` | `mrbogomips` |
